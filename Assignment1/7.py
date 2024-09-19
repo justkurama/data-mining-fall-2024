@@ -4,8 +4,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 
 # Load the dataset
 data = pd.read_csv('cereal.csv')
@@ -28,7 +28,7 @@ numeric_transformer = Pipeline(steps=[
 
 categorical_transformer = Pipeline(steps=[
     ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
-    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
 ])
 
 # Combine preprocessing steps
@@ -41,7 +41,7 @@ preprocessor = ColumnTransformer(
 # Create the preprocessing and modeling pipeline
 model = Pipeline(steps=[
     ('preprocessor', preprocessor),
-    ('classifier', RandomForestClassifier(random_state=42))
+    ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
 ])
 
 # Fit the pipeline to the training data
@@ -51,5 +51,5 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 # Evaluate the model
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Model accuracy: {accuracy:.2f}')
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
